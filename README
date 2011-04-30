@@ -11,4 +11,58 @@
 * For the following hosts, show me everything you can possibly find out.
 * Run this command (size of a specific file, for example) on all hosts in this pool and give me a sum of the output.  Okay, now show me the distribution.  Now give me the sum broken out by version of this library.
 
+There are probably 3 things that we want to work with here:
+* Metadata about hosts; a description of your cluster.
+    * Search: given a specification of properties, give me a list of hosts.
+        (mysql-version=5.1 & ( pool=analytics | pool=marketing ))
+    * Classify: given a host, give me all the cluster metadata.
+* Commands to run on hosts
+    * Filtered and cumulative; each command lists a filter for the type of hosts it can run on, and asking for a command will (by default) run all commands of that name where the host matches the filter.
+        stats.load-average makes sense on all hosts, but stats.sql-slave does not.  If I ask for just 'stats', I want to see everything relevant to the host I'm asking about.
+* Operations to run on the data we get back.
+    * filter, transform, join, group, graph
 
+I haven't yet done much thinking about the details of the last, so I will neglect it for now.
+
+Configured by a set of conf.d-style directories; consider the following example command configs:
+
+    [stats.load-average]
+    filter = type=host
+    type = ssh
+    format = json
+    command = foo_uptime
+    # output like: { "1-min": 0.04, "5-min": 0.08, "15-min": 0.12 }
+
+    [stats.sql-slave]
+    filter = class=mysql
+    type = sql
+    command = "show slave status"
+    keep = slave_sql_running, seconds_behind_master
+
+    [stats.http-up]
+    filter = class=web
+    level = -2 # not normally run
+    type = cmd
+    format = return-code
+    command = nmap -sG - -p 80 $target | grep -F 80/open
+
+    [reload.nginx]
+    filter = proxy-software=nginx
+    type = ssh
+    format = plain
+    ssh.user = root
+    command = /etc/init.d/nginx reload
+
+    [sh]
+    filter = type=host
+    args = 1
+    type = cmd
+    format = plain
+    cmd = ssh $target $arg1
+
+    [rsync]
+    filter = type=host
+    args = 2
+    type = cmd
+    format = return-code
+    command = rsync -Pav $arg1 $target:$arg2
