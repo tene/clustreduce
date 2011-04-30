@@ -1,0 +1,14 @@
+    Clustreduce is designed to aid information discovery and management over a large number of servers.  I've spent years writing paragraphs of shell to answer questions that should have been a single command away, and should have been far more reusable than they actually were once I was done.  This is my proposal for a simple way to answer the following questions:
+
+* Given this specific list of servers, what are they?  What configuration attributes do they share?  Are they all mysql boxes?  Are they all web hosts?  How do they differ from a larger pool?  Are these all the four-core web hosts?
+* What's the distribution of load average over the web pool?  min - mean - max?  Can you show me a graph of that?  What about load vs current connections?  Average response time vs load average?  What's the load distribution for this pool broken out by number of cpu cores?  cpu speed?  Which of these attributes I know about show the highest divergence in response time between hosts with different values?
+* When I run this command on all hosts, which hosts had which output?
+* What's the difference in the contents of this file across all hosts in this pool?  Which hosts have which version?
+* Restart apache on all web hosts.  all hosts of this pool.  all web hosts in this pool with a load above 10.  All at once ASAP.  Five at a time.  One at a time, with a five-second delay between each.
+* What's the list of hosts currently failing this nagios check?
+* Copy this file to all hosts in this class.
+* For the following hosts, show me everything important.
+* For the following hosts, show me everything you can possibly find out.
+* Run this command (size of a specific file, for example) on all hosts in this pool and give me a sum of the output.  Okay, now show me the distribution.  Now give me the sum broken out by version of this library.
+
+
